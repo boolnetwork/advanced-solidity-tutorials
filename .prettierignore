@@ -1,0 +1,13 @@
+node_modules
+artifacts
+artifacts-zk
+cache
+cache-zk
+coverage*
+package.json
+.env
+.*
+README.md
+coverage.json
+deployments
+typechain-types
