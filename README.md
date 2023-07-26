@@ -109,7 +109,7 @@ Deploy an AMT Bridge ([Build an AMT Bridge](#build-an-amt-bridge)) and get two `
 ## TokenBridge.sol - a burn & mint ERC20 token bridge
 
 > WARNING: **You must deploy an AMT bridge through BoolScan before building a TokenBridge.**
-1. Deploy two TokenBridges:
+1. Deploy two TokenBridge contracts.
     ```angular2html
     Format: yarn hardhat deployTokenBridge --anchor <anchor address> --decimals <decimals> --name <token name> --symbol <token symbol> --network <network name>
     ```
@@ -130,7 +130,7 @@ Deploy an AMT Bridge ([Build an AMT Bridge](#build-an-amt-bridge)) and get two `
     Deploying a new TokenBridge contract on chain 280...
     TokenBridge deployed at 0x281b5702012654065733A0b763e2F3494663968b
     ```
-2. Binding TokenBridge to Anchor
+2. Binding each TokenBridge to an Anchor.
     ```angular2html
     Format: yarn hardhat updateConsumer --anchor <anchor address> --consumer <tokenBridge address> --network <network name>
     ```
@@ -170,7 +170,7 @@ Deploy an AMT Bridge ([Build an AMT Bridge](#build-an-amt-bridge)) and get two `
     Updating the remote anchors...
     Transaction hash: 0x46660f869763dedb4a3697cb08fbb51b666bef6204e3c7eabd2c66481ae34e56
     ```
-4. Deposit tokens on Arbitrum Goerli and receive them on zkSync Goerli
+4. Deposit tokens on Arbitrum Goerli and receive them on zkSync Goerli.
     ```angular2html
     Format: yarn hardhat tokenBridgeDeposit --amount <deposit amount> --bridge <tokenBridge address> --id <destination chain id> --network <network name>
     ```
