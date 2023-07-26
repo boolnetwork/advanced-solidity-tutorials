@@ -5,7 +5,7 @@
 ---
 
 # Bool Network Advanced Solidity Examples
-
+Advanced Solidity examples for developing on Bool Network.
 ## Installation
 -   Clone this repository
     ```sh

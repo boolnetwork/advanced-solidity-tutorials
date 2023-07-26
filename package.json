@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "author": "0xAndersonZ@BoolNetwork",
   "license": "MIT",
+  "description": "Advanced Solidity examples for developing on Bool Network.",
   "scripts": {
     "slither": "slither . --solc-remaps '@openzeppelin=node_modules/@openzeppelin' --exclude naming-convention,external-function,low-level-calls",
     "lint": "yarn solhint 'contracts/**/*.sol'",
