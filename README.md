@@ -99,79 +99,89 @@ In this section, we provide an outline for developers to build an Arbitrary Mess
 
 > WARNING: **TokenBridge is designed for testing purposes only.**
 
+This section provides an outline for deploying a burn & mint ERC20 token bridge on Bool Network.
+
 ## Deploy Setup
+Deploy an AMT Bridge ([Build an AMT Bridge](#build-an-amt-bridge)) and get two `Anchor` addresses through `BoolScan/Dashboard/Bridge/<your bridge>`. For example:
+- `0xe59a9ab6a5732d5f7a89d9c7f31964c459456f70` on Arbitrum Goerli
+- `0x7eb25a4ab45e29c9306a1987c664111bf7ebd002` on zkSync Goerli
 
 ## TokenBridge.sol - a burn & mint ERC20 token bridge
 
-> WARNING: **You must deploy an AMT bridge through BoolScan before building a TokenBridge. ()**
-> 
-1. Deploy an AMT Bridge ([Build an AMT Bridge](#build-an-amt-bridge)) and get two `Anchor` addresses through `BoolScan/Dashboard/Bridge/<your bridge>`. For example:
-    - `0xe59a9ab6a5732d5f7a89d9c7f31964c459456f70` on Arbitrum Goerli
-    - `0x7eb25a4ab45e29c9306a1987c664111bf7ebd002` on zkSync Goerli
+> WARNING: **You must deploy an AMT bridge through BoolScan before building a TokenBridge.**
+1. Deploy two TokenBridges:
+    ```angular2html
+    Format: yarn hardhat deployTokenBridge --anchor <anchor address> --decimals <decimals> --name <token name> --symbol <token symbol> --network <network name>
+    ```
+    ```angular2html
+    yarn hardhat deployTokenBridge --anchor 0xe59a9ab6a5732d5f7a89d9c7f31964c459456f70 --decimals 9 --name BoolTestToken --symbol BTT --network arbitrum_goerli
 
-2. Deploy two TokenBridges:
-```angular2html
-yarn hardhat deployTokenBridge --anchor 0xe59a9ab6a5732d5f7a89d9c7f31964c459456f70 --decimals 9 --name BoolTestToken --symbol BTT --network arbitrum_goerli
+    Output:
+    Deploying TokenBridge...
+    Deploying a new TokenBridge contract on chain 421613...
+    TokenBridge deployed at 0x565D09b0cd1c8B7Ca4846c06cc9Ec4a92a01012d
+    ```
+    ```angular2html
+    yarn hardhat deployTokenBridge --anchor 
+    0x7eb25a4ab45e29c9306a1987c664111bf7ebd002 --decimals 9 --name BoolTestToken --symbol BTT --network zksync_goerli
 
-Output:
-Deploying TokenBridge...
-Deploying a new TokenBridge contract on chain 421613...
-TokenBridge deployed at 0x565D09b0cd1c8B7Ca4846c06cc9Ec4a92a01012d
-```
-```angular2html
-yarn hardhat deployTokenBridge --anchor 
-0x7eb25a4ab45e29c9306a1987c664111bf7ebd002 --decimals 9 --name BoolTestToken --symbol BTT --network zksync_goerli
+    Output:
+    Deploying TokenBridge...
+    Deploying a new TokenBridge contract on chain 280...
+    TokenBridge deployed at 0x281b5702012654065733A0b763e2F3494663968b
+    ```
+2. Binding TokenBridge to Anchor
+    ```angular2html
+    Format: yarn hardhat updateConsumer --anchor <anchor address> --consumer <tokenBridge address> --network <network name>
+    ```
+    ```angular2html
+    yarn hardhat updateConsumer --anchor 0xe59a9ab6a5732d5f7a89d9c7f31964c459456f70 --consumer 0x565D09b0cd1c8B7Ca4846c06cc9Ec4a92a01012d --network arbitrum_goerli
 
-Output:
-Deploying TokenBridge...
-Deploying a new TokenBridge contract on chain 280...
-TokenBridge deployed at 0x281b5702012654065733A0b763e2F3494663968b
-```
+    Output:
+    The current consumer: 0x0000000000000000000000000000000000000000
+    Updating the consumer...
+    Transaction hash: 0x9bb73e827f490d7863bb23696ee55c8f0ce9395a64c1b67edc1b7fb1127446a5
+    The new consumer: 0x565D09b0cd1c8B7Ca4846c06cc9Ec4a92a01012d
+    ```
+    ```angular2html
+    yarn hardhat updateConsumer --anchor 0x7eb25a4ab45e29c9306a1987c664111bf7ebd002 --consumer 0x281b5702012654065733A0b763e2F3494663968b --network zksync_goerli
 
-3. Binding TokenBridge to Anchor
-```angular2html
-yarn hardhat updateConsumer --anchor 0xe59a9ab6a5732d5f7a89d9c7f31964c459456f70 --consumer 0x565D09b0cd1c8B7Ca4846c06cc9Ec4a92a01012d --network arbitrum_goerli
+    Output:
+    The current consumer: 0x0000000000000000000000000000000000000000
+    Updating the consumer...
+    Transaction hash: 0x139d4589783d96a36d7a40748a7e090e844feb131b007850a4a3ed9ca06bb673
+    The new consumer: 0x281b5702012654065733A0b763e2F3494663968bb
+    ```
+3. Configure the "remote anchors" so each of them can receive messages from one another, and `only` one another on a specific chain.
+    ```angular2html
+    Format: yarn hardhat updateRemoteAnchor --anchor <anchor address> --id <remote chain id> --remoteanchor <remote anchor address in bytes32> --network <network name>
+    ```
+    ```angular2html
+    yarn hardhat updateRemoteAnchor --anchor 0xe59a9ab6a5732d5f7a89d9c7f31964c459456f70 --id 280 --remoteanchor 0x0000000000000000000000007eb25a4ab45e29c9306a1987c664111bf7ebd002 --network arbitrum_goerli
 
-Output:
-The current consumer: 0x0000000000000000000000000000000000000000
-Updating the consumer...
-Transaction hash: 0x9bb73e827f490d7863bb23696ee55c8f0ce9395a64c1b67edc1b7fb1127446a5
-The new consumer: 0x565D09b0cd1c8B7Ca4846c06cc9Ec4a92a01012d
-```
-```angular2html
-yarn hardhat updateConsumer --anchor 0x7eb25a4ab45e29c9306a1987c664111bf7ebd002 --consumer 0x281b5702012654065733A0b763e2F3494663968b --network zksync_goerli
+    Output:
+    Updating the remote anchors...
+    Transaction hash: 0x3ef9850d957763db1eb9a0fc3526ba6a70f67e64b547a7569e87102314629854
+    ```
+    ```angular2html
+    yarn hardhat updateRemoteAnchor --anchor 0x7eb25a4ab45e29c9306a1987c664111bf7ebd002 --id 421613 --remoteanchor 0x000000000000000000000000e59a9ab6a5732d5f7a89d9c7f31964c459456f70 --network zksync_goerli
 
-Output:
-The current consumer: 0x0000000000000000000000000000000000000000
-Updating the consumer...
-Transaction hash: 0x139d4589783d96a36d7a40748a7e090e844feb131b007850a4a3ed9ca06bb673
-The new consumer: 0x281b5702012654065733A0b763e2F3494663968bb
-```
+    Output:
+    Updating the remote anchors...
+    Transaction hash: 0x46660f869763dedb4a3697cb08fbb51b666bef6204e3c7eabd2c66481ae34e56
+    ```
+4. Deposit tokens on Arbitrum Goerli and receive them on zkSync Goerli
+    ```angular2html
+    Format: yarn hardhat tokenBridgeDeposit --amount <deposit amount> --bridge <tokenBridge address> --id <destination chain id> --network <network name>
+    ```
+    ```angular2html
+    yarn hardhat tokenBridgeDeposit --amount 1000000000 --bridge 0x565D09b0cd1c8B7Ca4846c06cc9Ec4a92a01012d --id 280 --network arbitrum_goerli
 
-4. Configure the "remote anchors" so each of them can receive messages from one another, and `only` one another on a specific chain.
-```angular2html
-yarn hardhat updateRemoteAnchor --anchor 0xe59a9ab6a5732d5f7a89d9c7f31964c459456f70 --id 280 --remoteanchor 0x0000000000000000000000007eb25a4ab45e29c9306a1987c664111bf7ebd002 --network arbitrum_goerli
-
-Output:
-Updating the remote anchors...
-Transaction hash: 0x3ef9850d957763db1eb9a0fc3526ba6a70f67e64b547a7569e87102314629854
-```
-```angular2html
-yarn hardhat updateRemoteAnchor --anchor 0x7eb25a4ab45e29c9306a1987c664111bf7ebd002 --id 421613 --remoteanchor 0x000000000000000000000000e59a9ab6a5732d5f7a89d9c7f31964c459456f70 --network zksync_goerli
-
-Output:
-Updating the remote anchors...
-Transaction hash: 0x46660f869763dedb4a3697cb08fbb51b666bef6204e3c7eabd2c66481ae34e56
-```
-5. Deposit tokens on Arbitrum Goerli and receive them on zkSync Goerli
-```angular2html
-yarn hardhat tokenBridgeDeposit --amount 1000000000 --bridge 0x565D09b0cd1c8B7Ca4846c06cc9Ec4a92a01012d --id 280 --network arbitrum_goerli
-
-Output:
-Depositing 1.0 BTT to chain 280
-Transaction hash: 0x4de93d3f6ae3d301e0ceffbee3e87203db98aa8017e2f66321f547d4431a5d32
-```
-6. Track the lifecycle of the transaction on [BoolScan](https://boolscan.com/bridge/amt/?network=testnet).
+    Output:
+    Depositing 1.0 BTT to chain 280
+    Transaction hash: 0x4de93d3f6ae3d301e0ceffbee3e87203db98aa8017e2f66321f547d4431a5d32
+    ```
+5. Track the lifecycle of the transaction on [BoolScan](https://boolscan.com/bridge/amt/?network=testnet).
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
