@@ -80,11 +80,12 @@ In this section, we provide an outline for developers to build an Arbitrary Mess
 
 > WARNING: **You must build an AMT bridge before deploying an omni-chain application on Bool Network.**
 
-1. Open [Bool Network Explorer (Testnet)](https://boolscan.com/dashboard/committee?network=testnet).
-2. Connect your MetaMask to Bool Network Testnet ([configuration here](https://boolnetwork.gitbook.io/docs/evm-ecosystem/amt-bridges/network-configuration)).
-3. Create two `ECDSA`-type committees, one for each chain ([link here](https://boolnetwork.gitbook.io/docs/evm-ecosystem/amt-bridges/create-committees)).
-4. Build an AMT bridge by deploying two `Anchor` contracts to two chains respectively ([link here](https://boolnetwork.gitbook.io/docs/evm-ecosystem/amt-bridges/build-a-bridge)).
-5. You should see your newly created AMT bridge under the `Dashboard/Bridge` tab ([link here](https://boolscan.com/dashboard/bridge?network=testnet)). An example is given as follows: 
+1. Get tBOOL tokens from [Bool Network Testnet Faucet](https://faucet.bool.network/).
+2. Open [Bool Network Explorer (Testnet)](https://boolscan.com/dashboard/committee?network=testnet).
+3. Connect your MetaMask to Bool Network Testnet ([configuration here](https://boolnetwork.gitbook.io/docs/evm-ecosystem/amt-bridges/network-configuration)).
+4. Create two `ECDSA`-type committees, one for each chain ([link here](https://boolnetwork.gitbook.io/docs/evm-ecosystem/amt-bridges/create-committees)).
+5. Build an AMT bridge by deploying two `Anchor` contracts to two chains respectively ([link here](https://boolnetwork.gitbook.io/docs/evm-ecosystem/amt-bridges/build-a-bridge)).
+6. You should see your newly created AMT bridge under the `Dashboard/Bridge` tab ([link here](https://boolscan.com/dashboard/bridge?network=testnet)). An example is given as follows: 
 
 <div align="center">
     <img alt="AMTBridgeInstance" src="images/AMTBridgeInstance.png"/>
