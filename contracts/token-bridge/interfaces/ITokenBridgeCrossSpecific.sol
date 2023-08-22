@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity ^0.8.13;
 
 interface ITokenBridgeCrossSpecific {
     /** Events */
@@ -11,6 +11,8 @@ interface ITokenBridgeCrossSpecific {
     function deposit(
         uint32 dstChainId,
         address payable refundAddress,
+        bytes32 crossType,
+        bytes memory extraFeed,
         uint256 amount,
         bytes32 dstRecipient
     ) external payable;
