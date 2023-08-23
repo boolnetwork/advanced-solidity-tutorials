@@ -86,42 +86,13 @@ const config: HardhatUserConfig = {
             chainId: 421613,
             zksync: false,
         },
-        /** Mainnets */
-        ethereum_mainnet: {
-            url: ETHEREUM_MAINNET_RPC_URL,
+        filecoin_testnet: {
+            url: process.env.FIL_CALIBRATION_RPC_URL || "",
             accounts: [
-                MAINNET_DEPLOYER_PRIVATE_KEY !== undefined ? MAINNET_DEPLOYER_PRIVATE_KEY : "",
+                TESTNET_DEPLOYER_PRIVATE_KEY !== undefined ? TESTNET_DEPLOYER_PRIVATE_KEY : "",
             ],
             saveDeployments: true,
-            chainId: 1,
-            zksync: false,
-        },
-        optimism_mainnet: {
-            url: process.env.OPTIMISM_MAINNET_RPC_URL || "https://rpc.ankr.com/optimism",
-            accounts: [
-                MAINNET_DEPLOYER_PRIVATE_KEY !== undefined ? MAINNET_DEPLOYER_PRIVATE_KEY : "",
-            ],
-            saveDeployments: true,
-            chainId: 10,
-            zksync: false,
-        },
-        zksync_mainnet: {
-            url: process.env.ZKSYNC_MAINNET_RPC_URL || "https://mainnet.era.zksync.io",
-            accounts: [
-                MAINNET_DEPLOYER_PRIVATE_KEY !== undefined ? MAINNET_DEPLOYER_PRIVATE_KEY : "",
-            ],
-            ethNetwork: ETHEREUM_MAINNET_RPC_URL,
-            saveDeployments: true,
-            chainId: 324,
-            zksync: true,
-        },
-        arbitrum_mainnet: {
-            url: process.env.ARBITRUM_MAINNET_RPC_URL || "https://rpc.ankr.com/arbitrum",
-            accounts: [
-                MAINNET_DEPLOYER_PRIVATE_KEY !== undefined ? MAINNET_DEPLOYER_PRIVATE_KEY : "",
-            ],
-            saveDeployments: true,
-            chainId: 42161,
+            chainId: 314159,
             zksync: false,
         },
     },
@@ -143,7 +114,7 @@ const config: HardhatUserConfig = {
     solidity: {
         compilers: [
             {
-                version: "0.8.16",
+                version: "0.8.13",
                 settings: {
                     optimizer: {
                         enabled: true,

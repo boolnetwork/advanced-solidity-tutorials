@@ -7,6 +7,7 @@ export const CHAINID_TO_CHAINNAME: any = {
     280: "zksync_goerli",
     420: "optimism_goerli",
     421613: "arbitrum_goerli",
+    314159: "filecoin_testnet",
 }
 
 export const EXTRA_NETWORK_CONFIG: Record<number, ExtraNetworkConfig> = {
@@ -35,5 +36,9 @@ export const EXTRA_NETWORK_CONFIG: Record<number, ExtraNetworkConfig> = {
     421613: {
         name: "arbitrum_goerli",
         blockConfirmations: 6,
+    },
+    314159: {
+        name: "filecoin_testnet",
+        blockConfirmations: 1,
     },
 }
