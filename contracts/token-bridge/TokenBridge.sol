@@ -6,11 +6,11 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 import {IMessengerFee} from "../bool/interfaces/IMessengerFee.sol";
 import {IAnchor} from "../bool/interfaces/IAnchor.sol";
-import {BoolConsumerBaseV2} from "../bool/BoolConsumerBaseV2.sol";
+import {BoolConsumerBase} from "../bool/BoolConsumerBase.sol";
 
 import {ITokenBridgeCrossSpecific} from "./interfaces/ITokenBridgeCrossSpecific.sol";
 
-contract TokenBridge is Ownable, ERC20, BoolConsumerBaseV2, ITokenBridgeCrossSpecific {
+contract TokenBridge is Ownable, ERC20, BoolConsumerBase, ITokenBridgeCrossSpecific {
     /** Events */
     event Issue(address indexed account, uint256 amount);
 
@@ -24,7 +24,7 @@ contract TokenBridge is Ownable, ERC20, BoolConsumerBaseV2, ITokenBridgeCrossSpe
         string memory symbol_,
         uint256 initialSupply_,
         address anchor_
-    ) ERC20(name_, symbol_) BoolConsumerBaseV2(anchor_) {
+    ) ERC20(name_, symbol_) BoolConsumerBase(anchor_) {
         _decimals = decimals_;
         _mint(msg.sender, initialSupply_);
     }
@@ -47,8 +47,6 @@ contract TokenBridge is Ownable, ERC20, BoolConsumerBaseV2, ITokenBridgeCrossSpe
     function deposit(
         uint32 dstChainId,
         address payable refundAddress,
-        bytes32 crossType,
-        bytes memory extraFeed,
         uint256 amount,
         bytes32 dstRecipient
     ) public payable override {
@@ -67,7 +65,7 @@ contract TokenBridge is Ownable, ERC20, BoolConsumerBaseV2, ITokenBridgeCrossSpe
         bytes memory payload = _encodePayload(amount, dstRecipient);
 
         // Send to the binding anchor
-        _sendAnchor(callValue, refundAddress, crossType, extraFeed, dstChainId, payload);
+        _sendAnchor(callValue, refundAddress, PURE_MESSAGE, "", dstChainId, payload);
 
         // Emit the event
         emit Deposit(dstChainId, sender, amount);

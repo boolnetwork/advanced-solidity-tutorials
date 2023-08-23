@@ -11,8 +11,6 @@ interface ITokenBridgeCrossSpecific {
     function deposit(
         uint32 dstChainId,
         address payable refundAddress,
-        bytes32 crossType,
-        bytes memory extraFeed,
         uint256 amount,
         bytes32 dstRecipient
     ) external payable;
