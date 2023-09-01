@@ -57,7 +57,7 @@ ARBITRUM_GOERLI_RPC_URL =
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-# Build an AMT Bridge
+# AMT Bridge in Bool Network
 
 ## About AMT Bridge
 
@@ -68,11 +68,26 @@ Each AMT bridge is defined by a group of `Anchor` contracts, one on each chain. 
 
 The security of each `Anchor` is preserved by a distinctive [Dynamic Hidden Committee](https://boolnetwork.gitbook.io/docs/concepts/dynamic-hidden-committee-dhc) in Bool Network.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ### How does an AMT Bridge work?
+
+The diagram below visually depicts the complete lifecycle of a cross-chain transaction processed by Bool Network. 
 
 <div align="center">
     <img alt="AMTInfrastructure" src="images/AMTInfrastructure.png"/>
 </div>
+
+`Consumer` in the diagram is **instantiated** by a liquidity pool for USDT, which also effectively illustrates the process of a cross-chain asset transfer conducted by our SWAP application, BoolSwap. The detailed process is as follows:
+
+- `Source Step1`: When the source `Pool` receives a specific amount of the designated token, it generates a message including the informaiton of the amount of token and the address of the destination recipient, and sends it in the form of a `payload` to its binding `Anchor` on the source chain. 
+- `Source Step2`: The source `Anchor` then sends a **standardized message** to the source `Messenger` and triggers the standard cross-chain event that can be monitored by Bool Network
+- `Off-chain Step1`: The `Committeee` binding to the destination `Anchor` will verify the finality of the source chain transaction and the validity of the message. If the verification is successful, the `Committee` will sign the message content with its private key.
+- `Off-chain Step2`: The `Deliverer` service (previously known as `Relayer`) will collect the `signature` and the corresponding `message`, and send them to the destination `Messenger`.
+- `Destination Step1`: The destination `Messenger` will verify the validity of the message versus the signature based on the public key stored on the destination `Anchor`, and then send the message to the destination `Anchor`.
+- `Destination Step2`: The destination `Anchor` then sends the message to the destination `Pool`, which will release the designated amount of token to the destination recipient.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Build an AMT Bridge
 
@@ -93,6 +108,37 @@ In this section, we provide an outline for developers to build an Arbitrary Mess
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Remaining Work
+After completing the creation of an AMT bridge, there are still the following necessary steps to complete the development of an omni-chain dApp:
+
+1. Design your `Consumer` contract that should comply with our standards where the `Anchor` address is cofigured as one of the constructor parameters ([link here](#consumer)).
+2. Deploy your `Consumer` contracts on each chain you intend to support.
+3. Bind each `Consumer` contract to its corresponding `Anchor` contract by calling the `updateConsumer` function on the `Anchor` contract.
+4. Update the remote `Anchor` addresses with remote `chainIds` on each `Anchor` contract by calling the `batchUpdateRemoteAnchors` function on the `Anchor` contract.
+5. Send transactions by calling the cross-chain functions in your `Consumer` contract, e.g. `deposit()` in the TokenBridge.sol, and track the lifecycle of the transaction via [BoolScan](https://boolscan.com/bridge/amt/?network=testnet).
+
+**Suggestion:** For steps 3 and 4, you can use the `updateConsumer` and `updateRemoteAnchor` tasks provided by this repository.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+# Consumer
+
+In this section, we will introduce dApp developers on how to design a `Consumer` contract that complies with the Bool Network standards.
+
+## Contract Inheritance
+Your `Consumer` contract must inherit from `./contracts/bool/BoolConsumerBase.sol`
+
+## Required Functions
+
+- `Send logic`: an **external payable** function to call `_sendAnchor` in order to send a cross-chain message to the `Anchor` contract on the source chain.
+- `Receive logic`: implement the `receiveFromAnchor` function to receive cross-chain message. **WARNING**: you must use the `onlyAnchor` modifier to restrict the access of this function to the binding `Anchor` contract.
+
+## Optional Functions
+
+- `Encode & Decode logic`: implement the `encodePayload` and `decodePayload` functions to encode and decode the message content. **Suggestions**: we recommend set the visibility of these two functions as `public`.
+- `Calculate fee`: implement the `calculateFee` function to calculate the fee for sending a cross-chain message based on your payload. This functin can provide convenience for the front-end by directly calculating the fee from your `Consumer` contract before initiating a cross-chain transaction.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 # TokenBridge
 
