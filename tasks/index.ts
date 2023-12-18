@@ -1,5 +1,14 @@
 import { task } from "hardhat/config"
 
+// General tasks
+task("checkBalance", "Check the balance of an account", require("./checkBalance")).addParam(
+    "addr",
+    "The address to check the balance of"
+)
+
+task("newChainTest", "Test the functionality of newly added RPC", require("./newChainTest"))
+
+// Anchor related tasks
 task("updateRemoteAnchor", "Configure remote anchors", require("./anchor/updateRemoteAnchor"))
     .addParam("anchor", "Address of Anchor")
     .addParam("id", "Chain ID of the remote path")
@@ -15,21 +24,13 @@ task("checkPath", "Check the remote path of Anchor", require("./anchor/checkPath
     .addParam("anchor", "Address of Anchor")
     .addParam("id", "Chain ID of the remote path")
 
-task(
-    "deployTokenBridge",
-    "Deploy a new TokenBridge contract",
-    require("./token-bridge/deployTokenBridge")
-)
-    .addParam("anchor", "Address of Anchor")
-    .addParam("decimals", "Decimals of the token")
-    .addParam("name", "Name of the token")
-    .addParam("symbol", "Symbol of the token")
-
 task("updateConsumer", "Update the consumer of Anchor", require("./anchor/updateConsumer"))
     .addParam("anchor", "Address of Anchor")
     .addParam("consumer", "Address of Consumer")
 
-task("tokenBridgeDeposit", "Deposit and ", require("./token-bridge/tokenBridgeDeposit"))
-    .addParam("bridge", "Address of TokenBridge")
-    .addParam("id", "Chain ID of the remote path")
-    .addParam("amount", "Amount of tokens to deposit")
+// Bridge related tasks
+task("bridgeOut", "Call BridgeOut", require("./bridge/bridgeOut"))
+    .addParam("bridge", "Address of MappedBridge")
+    .addParam("id", "Chain ID of the destination chain")
+    .addParam("amount", "Amount of tokens to bridge")
+    .addParam("recipient", "Address of dstRecipient")

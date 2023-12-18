@@ -1,0 +1,9 @@
+{
+    "80001": {
+        "StandardTokenBridge": "0x2Da39e43e915E72Eb33EfD0596007dd32A63e892",
+        "BridgedERC20": "0xec856b1D3778b28C09C983F452Ba7891fcf63462"
+    },
+    "11155111": {
+        "StandardTokenBridge": "0x0dCe2A3585d2aeB6ACEA3381227Fec4eB248a6ff"
+    }
+}

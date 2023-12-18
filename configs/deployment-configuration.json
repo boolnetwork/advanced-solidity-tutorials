@@ -1,0 +1,32 @@
+{
+    "1": {
+        "isNativeChain": true,
+        "anchor": "",
+        "sourceToken": ""
+    },
+    "137": {
+        "isNativeChain": false,
+        "anchor": "",
+        "bridgeTokenDetails": {
+            "name": "",
+            "symbol": "",
+            "decimals": 18,
+            "sourceTokenAddress": ""
+        }
+    },
+    "11155111": {
+        "isNativeChain": true,
+        "anchor": "0x86f4a1fb7f64c8f5427c4a08fc8314ec5a7d1711",
+        "sourceToken": "0x9bc6c59062ffac7238513946f26621618da46ad0"
+    },
+    "80001": {
+        "isNativeChain": false,
+        "anchor": "0x97b82852c7becfe8e896860adfd364ad286b8334",
+        "bridgeTokenDetails": {
+            "name": "Bridged Mock Native ERC20",
+            "symbol": "MTERC20.b",
+            "decimals": 18,
+            "sourceTokenAddress": "0x9bc6c59062ffac7238513946f26621618da46ad0"
+        }
+    }
+}

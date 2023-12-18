@@ -1,5 +1,5 @@
-import { Contract, Wallet } from "ethers"
-import { ethers } from "hardhat"
+import { Contract, ContractReceipt, ContractTransaction, Wallet } from "ethers"
+import { ethers, web3 } from "hardhat"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { Network } from "hardhat/types"
 
@@ -22,6 +22,14 @@ export const deployNewContract = async (
     return targetC
 }
 
+export const encodeParams = (types: string[], values: any[], packed = false): string => {
+    if (!packed) {
+        return web3.eth.abi.encodeParameters(types, values)
+    } else {
+        return ethers.utils.solidityPack(types, values)
+    }
+}
+
 export const getNetworkId = (network: Network): number => {
     // if network.config.chaindId is undefined, log error and return 0
     if (typeof network.config.chainId === "undefined") {
@@ -30,4 +38,20 @@ export const getNetworkId = (network: Network): number => {
     } else {
         return network.config.chainId
     }
+}
+
+export const getTargetEvent = async (
+    txReceipt: ContractReceipt,
+    targetEventName: string
+): Promise<any> => {
+    const targetEvent = txReceipt.events?.find((event) => event.event === targetEventName)
+    return targetEvent
+}
+
+export const getTransactionReceipt = async (
+    txResponse: ContractTransaction,
+    waitConfirmations: number
+): Promise<ContractReceipt> => {
+    const txReceipt = await txResponse.wait(waitConfirmations)
+    return txReceipt
 }

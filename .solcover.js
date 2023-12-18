@@ -1,3 +1,5 @@
 module.exports = {
-    skipFiles: []
+    skipFiles: [
+      "mock", "bool"
+    ]
   };

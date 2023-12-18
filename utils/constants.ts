@@ -2,11 +2,10 @@ import { ExtraNetworkConfig } from "./types"
 
 export const LOCAL_DEV_NETWORK_NAMES = ["hardhat", "localhost"]
 export const ENVs = ["dev", "test", "alpha"]
-export const CHAINID_TO_CHAINNAME: any = {
-    5: "ethereum_goerli",
-    280: "zksync_goerli",
-    420: "optimism_goerli",
-    421613: "arbitrum_goerli",
+
+export const DEPLOYMENT_RECORD_FRAMEWORK = {
+    StandardTokenBridge: "",
+    BridgedERC20: "",
 }
 
 export const EXTRA_NETWORK_CONFIG: Record<number, ExtraNetworkConfig> = {
@@ -14,26 +13,52 @@ export const EXTRA_NETWORK_CONFIG: Record<number, ExtraNetworkConfig> = {
     31337: {
         name: "hardhat",
         blockConfirmations: 1,
+        isLocalDev: true,
+        isTestnet: false,
+        isMainnet: false,
+        networkTokenSymbol: "ETH",
+        isActive: false,
+    },
+    /**
+     * EVM-Compatible Mainnets
+     */
+    1: {
+        name: "ethereum_mainnet",
+        blockConfirmations: 3,
+        isLocalDev: false,
+        isTestnet: false,
+        isMainnet: true,
+        networkTokenSymbol: "ETH",
+        isActive: true,
+    },
+    137: {
+        name: "polygon_mainnet",
+        blockConfirmations: 3,
+        isLocalDev: false,
+        isTestnet: false,
+        isMainnet: true,
+        networkTokenSymbol: "MATIC",
+        isActive: true,
     },
     /**
      * EVM-Compatible Testnets
      */
-    5: {
-        name: "ethereum_goerli",
-        blockConfirmations: 6,
+    80001: {
+        name: "polygon_mumbai",
+        blockConfirmations: 3,
+        isLocalDev: false,
+        isTestnet: true,
+        isMainnet: false,
+        networkTokenSymbol: "MATIC",
+        isActive: true,
     },
-    // zkSync Era Testnet
-    280: {
-        name: "zksync_goerli",
-        blockConfirmations: 6,
-    },
-    // Optimism Goerli
-    420: {
-        name: "optimism_goerli",
-        blockConfirmations: 6,
-    },
-    421613: {
-        name: "arbitrum_goerli",
-        blockConfirmations: 6,
+    11155111: {
+        name: "ethereum_sepolia",
+        blockConfirmations: 3,
+        isLocalDev: false,
+        isTestnet: true,
+        isMainnet: false,
+        networkTokenSymbol: "ETH",
+        isActive: true,
     },
 }
