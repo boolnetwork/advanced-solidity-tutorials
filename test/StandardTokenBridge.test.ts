@@ -4,9 +4,9 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 
 import * as C from "../typechain-types"
 import { expect } from "chai"
-import { deployNewContract, encodeParams } from "../utils/helpers"
+import { addressToBytes32, deployNewContract, encodeParams } from "../utils/helpers"
 
-const NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
+const NULL_BYTES32 = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
 !LOCAL_DEV_NETWORK_NAMES.includes(network.name)
     ? describe.skip
@@ -75,27 +75,34 @@ const NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
           it("encode & decode payload", async () => {
               const amount = ethers.utils.parseUnits("100", "18")
               const dstRecipient = user.address
-              const encodedPayload = await bridgeC.encodePayload(amount, dstRecipient)
+              const encodedPayload = await bridgeC.encodePayload(
+                  amount,
+                  addressToBytes32(dstRecipient)
+              )
               expect(encodedPayload).to.be.equal(
                   encodeParams(["uint256", "address"], [amount, dstRecipient])
               )
               const decodedRes = await bridgeC.decodePayload(encodedPayload)
               expect(decodedRes.amount).to.be.equal(amount)
-              expect(decodedRes.recipient).to.be.equal(dstRecipient)
+              expect(decodedRes.recipient.toLowerCase()).to.be.equal(
+                  addressToBytes32(dstRecipient).toLowerCase()
+              )
           })
 
           describe("bridgeOut", () => {
               it("zero amount", async () => {
                   await expect(
-                      bridgeC.connect(user).bridgeOut(dstChainId, 0, user.address, {
-                          value: 0,
-                      })
+                      bridgeC
+                          .connect(user)
+                          .bridgeOut(dstChainId, 0, addressToBytes32(user.address), {
+                              value: 0,
+                          })
                   ).to.be.revertedWith("ZERO_AMOUNT")
               })
 
               it("null recipient", async () => {
                   await expect(
-                      bridgeC.connect(user).bridgeOut(dstChainId, bridgeAmount, NULL_ADDRESS, {
+                      bridgeC.connect(user).bridgeOut(dstChainId, bridgeAmount, NULL_BYTES32, {
                           value: 0,
                       })
                   ).to.be.revertedWith("NULL_RECIPIENT")
@@ -103,9 +110,11 @@ const NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
 
               it("insufficient allowance", async () => {
                   await expect(
-                      bridgeC.connect(user).bridgeOut(dstChainId, bridgeAmount, user.address, {
-                          value: 0,
-                      })
+                      bridgeC
+                          .connect(user)
+                          .bridgeOut(dstChainId, bridgeAmount, addressToBytes32(user.address), {
+                              value: 0,
+                          })
                   ).to.be.revertedWith("ERC20: insufficient allowance")
               })
 
@@ -116,9 +125,14 @@ const NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
                   await expect(
                       bridgeC
                           .connect(user)
-                          .bridgeOut(dstChainId, bridgeAmount.mul(2), user.address, {
-                              value: 0,
-                          })
+                          .bridgeOut(
+                              dstChainId,
+                              bridgeAmount.mul(2),
+                              addressToBytes32(user.address),
+                              {
+                                  value: 0,
+                              }
+                          )
                   ).to.be.revertedWith("ERC20: transfer amount exceeds balance")
               })
 
@@ -127,9 +141,11 @@ const NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
                       .connect(user)
                       .approve(bridgeC.address, ethers.constants.MaxUint256)
                   await expect(
-                      bridgeC.connect(user).bridgeOut(dstChainId, bridgeAmount, user.address, {
-                          value: 0,
-                      })
+                      bridgeC
+                          .connect(user)
+                          .bridgeOut(dstChainId, bridgeAmount, addressToBytes32(user.address), {
+                              value: 0,
+                          })
                   ).to.be.revertedWith("INSUFFICIENT_BRIDGE_FEE")
               })
           })

@@ -32,13 +32,13 @@ contract StandardTokenBridge is TokenBridgeBase, ITokenBridgeCrossSpecific {
      * @notice Entry on the destination chain (Initiative)
      * @param dstChainId Destination chain ID
      * @param amount Amount of tokens to be bridged
-     * @param dstRecipient Address of the recipient on the destination chain
+     * @param dstRecipient Address of the recipient on the destination chain (in bytes32)
      * @dev Security: sufficient allowance and balance is required
      */
     function bridgeOut(
         uint32 dstChainId,
         uint256 amount,
-        address dstRecipient
+        bytes32 dstRecipient
     ) public payable override whenNotPaused {
         uint256 callValue = msg.value;
         address sender = msg.sender;
@@ -48,7 +48,7 @@ contract StandardTokenBridge is TokenBridgeBase, ITokenBridgeCrossSpecific {
 
         // Check the data validity
         require(amount > 0, "ZERO_AMOUNT");
-        require(dstRecipient != address(0), "NULL_RECIPIENT");
+        require(dstRecipient != bytes32(0), "NULL_RECIPIENT");
 
         // Transfer the bridge token to the contract (Sufficient allowance and balance is required)
         IERC20(token).safeTransferFrom(sender, thisAddress, amount);
@@ -89,8 +89,9 @@ contract StandardTokenBridge is TokenBridgeBase, ITokenBridgeCrossSpecific {
         bytes memory payload
     ) external override onlyAnchor whenNotPaused {
         // Decode the original payload
-        (uint256 amount, address recipient) = decodePayload(payload);
+        (uint256 amount, bytes32 recipientInBytes32) = decodePayload(payload);
 
+        address recipient = bytes32ToAddress(recipientInBytes32);
         _bridgeIn(amount, recipient);
 
         // Emit the event
@@ -117,7 +118,7 @@ contract StandardTokenBridge is TokenBridgeBase, ITokenBridgeCrossSpecific {
     function getBridgeFee(
         uint32 dstChainId,
         uint256 amount,
-        address dstRecipient
+        bytes32 dstRecipient
     ) public view override returns (uint256 fee) {
         bytes memory payload = encodePayload(amount, dstRecipient);
         fee = IMessengerFee(messenger).cptTotalFee(
@@ -127,5 +128,9 @@ contract StandardTokenBridge is TokenBridgeBase, ITokenBridgeCrossSpecific {
             PURE_MESSAGE,
             bytes("")
         );
+    }
+
+    function bytes32ToAddress(bytes32 account) public pure returns (address) {
+        return address(uint160(uint256(account)));
     }
 }

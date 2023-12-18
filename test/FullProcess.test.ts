@@ -4,7 +4,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 
 import * as C from "../typechain-types"
 import { expect } from "chai"
-import { deployNewContract, getTransactionReceipt } from "../utils/helpers"
+import { addressToBytes32, deployNewContract, getTransactionReceipt } from "../utils/helpers"
 
 !LOCAL_DEV_NETWORK_NAMES.includes(network.name)
     ? describe.skip
@@ -81,8 +81,15 @@ import { deployNewContract, getTransactionReceipt } from "../utils/helpers"
           it("lock & mint", async () => {
               const dstChainId = 137
               const amount = ethers.utils.parseUnits("100", "6")
-              const payload = await aBridgeC.encodePayload(amount, dstRecipient.address)
-              const fee = await aBridgeC.getBridgeFee(dstChainId, amount, dstRecipient.address)
+              const payload = await aBridgeC.encodePayload(
+                  amount,
+                  addressToBytes32(dstRecipient.address)
+              )
+              const fee = await aBridgeC.getBridgeFee(
+                  dstChainId,
+                  amount,
+                  addressToBytes32(dstRecipient.address)
+              )
               // Transfer test tokens to user
               await aSourceTokenC.connect(deployer).transfer(user.address, amount)
 
@@ -91,7 +98,7 @@ import { deployNewContract, getTransactionReceipt } from "../utils/helpers"
 
               await aBridgeC
                   .connect(user)
-                  .bridgeOut(dstChainId, amount, user.address, { value: fee })
+                  .bridgeOut(dstChainId, amount, addressToBytes32(user.address), { value: fee })
 
               expect(await aSourceTokenC.balanceOf(user.address)).to.be.equal(0)
               expect(await aSourceTokenC.balanceOf(aBridgeC.address)).to.be.equal(amount)
@@ -111,15 +118,21 @@ import { deployNewContract, getTransactionReceipt } from "../utils/helpers"
               const aChainId = 1
               const bChainId = 137
               const amount = ethers.utils.parseUnits("100", "18")
-              const payload = await aBridgeC.encodePayload(amount, user.address)
-              const fee = await aBridgeC.getBridgeFee(bChainId, amount, user.address)
+              const payload = await aBridgeC.encodePayload(amount, addressToBytes32(user.address))
+              const fee = await aBridgeC.getBridgeFee(
+                  bChainId,
+                  amount,
+                  addressToBytes32(user.address)
+              )
 
               // Transfer test tokens to user
               await aSourceTokenC.connect(deployer).transfer(user.address, amount)
 
               // Approve tokens to be locked
               await aSourceTokenC.connect(user).approve(aBridgeC.address, amount)
-              await aBridgeC.connect(user).bridgeOut(bChainId, amount, user.address, { value: fee })
+              await aBridgeC
+                  .connect(user)
+                  .bridgeOut(bChainId, amount, addressToBytes32(user.address), { value: fee })
               // Submit on the other chain
               await bAnchorC
                   .connect(deployer)
@@ -131,7 +144,9 @@ import { deployNewContract, getTransactionReceipt } from "../utils/helpers"
               await expect(
                   bBridgeC
                       .connect(user)
-                      .bridgeOut(aChainId, amount, dstRecipient.address, { value: fee })
+                      .bridgeOut(aChainId, amount, addressToBytes32(dstRecipient.address), {
+                          value: fee,
+                      })
               ).to.be.revertedWith("ERC20: insufficient allowance")
 
               await bStandardBridgeTokenC
@@ -141,13 +156,17 @@ import { deployNewContract, getTransactionReceipt } from "../utils/helpers"
               await expect(
                   bBridgeC
                       .connect(user)
-                      .bridgeOut(aChainId, amount.mul(2), dstRecipient.address, { value: fee })
+                      .bridgeOut(aChainId, amount.mul(2), addressToBytes32(dstRecipient.address), {
+                          value: fee,
+                      })
               ).to.be.revertedWith("ERC20: transfer amount exceeds balance")
 
               const txReceipt = await getTransactionReceipt(
                   await bBridgeC
                       .connect(user)
-                      .bridgeOut(aChainId, amount, dstRecipient.address, { value: fee }),
+                      .bridgeOut(aChainId, amount, addressToBytes32(dstRecipient.address), {
+                          value: fee,
+                      }),
                   1
               )
 
@@ -155,7 +174,10 @@ import { deployNewContract, getTransactionReceipt } from "../utils/helpers"
               expect(await bStandardBridgeTokenC.balanceOf(user.address)).to.be.equal(0)
               expect(await bStandardBridgeTokenC.totalSupply()).to.be.equal(0)
 
-              const returnPayload = await bBridgeC.encodePayload(amount, dstRecipient.address)
+              const returnPayload = await bBridgeC.encodePayload(
+                  amount,
+                  addressToBytes32(dstRecipient.address)
+              )
 
               const preABridgeBalance = await aSourceTokenC.balanceOf(aBridgeC.address)
               const preDstRecipientBalance = await aSourceTokenC.balanceOf(dstRecipient.address)

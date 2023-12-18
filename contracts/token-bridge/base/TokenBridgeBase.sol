@@ -33,7 +33,7 @@ abstract contract TokenBridgeBase is Ownable, Pausable, BoolConsumerBase {
     // Encode the payload to be sent
     function encodePayload(
         uint256 amount,
-        address dstRecipient
+        bytes32 dstRecipient
     ) public pure returns (bytes memory payload) {
         payload = abi.encode(amount, dstRecipient);
     }
@@ -41,7 +41,7 @@ abstract contract TokenBridgeBase is Ownable, Pausable, BoolConsumerBase {
     // Decode the payload received
     function decodePayload(
         bytes memory payload
-    ) public pure returns (uint256 amount, address recipient) {
-        (amount, recipient) = abi.decode(payload, (uint256, address));
+    ) public pure returns (uint256 amount, bytes32 recipient) {
+        (amount, recipient) = abi.decode(payload, (uint256, bytes32));
     }
 }
