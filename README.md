@@ -137,7 +137,7 @@ For example:
     Format: yarn hardhat tokenBridgeDeposit --bridge <tokenBridge address> --amount <deposit amount> --id <destination chain id> --recipient <destination receiver address> --network <network name>
     ```
     ```angular2html
-    yarn hardhat bridgeOut --bridge 0x0dCe2A3585d2aeB6ACEA3381227Fec4eB248a6ff --id 80001 --amount 1000000000000000000 --recipient 0x66feD255e376c5E5495384A8aBc01a1AA65aFE8a --network ethereum_sepolia
+    yarn hardhat bridgeOut --bridge 0x0dCe2A3585d2aeB6ACEA3381227Fec4eB248a6ff --id 80001 --amount 1000000000000000000 --recipient 0x00000000000000000000000066feD255e376c5E5495384A8aBc01a1AA65aFE8a --network ethereum_sepolia
 
     Output:
     Approve transaction hash: 0xc4f270c5e7cd82d913bbb2b215abe1a42e707508421b15fc406997184fe7fb94
